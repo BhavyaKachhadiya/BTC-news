@@ -239,3 +239,17 @@ model BacktestRun {
 
   @@index([timestamp(sort: Desc)])
 }
+
+model SavedStrategy {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String?
+  preset      String   // "trend_following" | "mean_reversion" | "breakout" | "conservative" | "custom"
+  parameters  String   // JSON stringified StrategyParameters
+  features    String?  // JSON stringified IntelligenceFeatures
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([createdAt(sort: Desc)])
+}
+

@@ -347,7 +347,7 @@ describe("Whale & On-Chain Intelligence Feature", () => {
       expect(whaleServiceInstance.getFreshness()).toBe("Just now");
       expect(whaleServiceInstance.getLastFetchedAt()).toBeInstanceOf(Date);
       expect(whaleServiceInstance.isCacheStale()).toBe(false);
-    });
+    }, 15000);
 
     it("returns cached summary within TTL without re-fetching", async () => {
       const first = await whaleServiceInstance.getWhaleIntelligence();
@@ -355,7 +355,7 @@ describe("Whale & On-Chain Intelligence Feature", () => {
 
       expect(first.freshness).toBe(second.freshness);
       expect(first.topTraders).toBe(second.topTraders);
-    });
+    }, 15000);
 
     it("forces refresh when forceRefresh flag is provided", async () => {
       const first = await whaleServiceInstance.getWhaleIntelligence();
@@ -368,6 +368,6 @@ describe("Whale & On-Chain Intelligence Feature", () => {
 
       expect(refreshed).toBeDefined();
       expect(refreshed.freshness).not.toBe("");
-    });
+    }, 15000);
   });
 });

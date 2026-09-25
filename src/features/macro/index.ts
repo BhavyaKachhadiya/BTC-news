@@ -37,3 +37,14 @@ export { equitiesService, EquitiesService, BASELINE_EQUITIES_QUOTE } from "./ser
 export { MacroOverview, type MacroOverviewProps } from "./components/MacroOverview";
 export { DxyCard, type DxyCardProps } from "./components/DxyCard";
 export { YieldCard, type YieldCardProps } from "./components/YieldCard";
+export { EconomicCalendarCard } from "./components/EconomicCalendarCard";
+
+// Calendar
+export type {
+  EconomicEvent,
+  EconomicEventImpact,
+  EconomicEventStatus,
+  EconomicCalendarSummary,
+} from "./types/calendar.types";
+export { economicCalendarService, EconomicCalendarService } from "./services/calendar.service";
+

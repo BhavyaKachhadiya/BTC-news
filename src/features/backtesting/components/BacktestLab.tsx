@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, useId } from "react";
+import React, { useState, useMemo, useId, useEffect } from "react";
 import {
   Sliders,
   Play,
@@ -16,6 +16,10 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   Check,
+  Bookmark,
+  Save,
+  Trash2,
+  FolderPlus,
 } from "lucide-react";
 import {
   STRATEGY_PRESETS,
@@ -41,6 +45,7 @@ import {
   formatPercent,
   formatNumber,
 } from "@/shared/utils/formatters";
+import { DataReplayPlayer } from "./DataReplayPlayer";
 
 export function BacktestLab() {
   const gradientId = useId();
@@ -61,8 +66,8 @@ export function BacktestLab() {
   const [feeBps, setFeeBps] = useState<number>(10);
   const [scenario, setScenario] = useState<MarketScenario>("full_cycle");
 
-  // Mode: "single" backtest or "sweep"
-  const [activeTab, setActiveTab] = useState<"single" | "sweep">("single");
+  // Mode: "single" backtest, "sweep", or "replay"
+  const [activeTab, setActiveTab] = useState<"single" | "sweep" | "replay">("single");
 
   // Simulation State
   const [backtestResult, setBacktestResult] = useState<BacktestResult | null>(
@@ -90,8 +95,80 @@ export function BacktestLab() {
     null,
   );
 
+  // Saved Strategies State
+  const [savedStrategies, setSavedStrategies] = useState<
+    Array<{
+      id: string;
+      name: string;
+      preset: string;
+      parameters: StrategyParameters;
+      createdAt: string;
+    }>
+  >([]);
+  const [isSavingStrategy, setIsSavingStrategy] = useState<boolean>(false);
+  const [newStrategyName, setNewStrategyName] = useState<string>("");
+  const [selectedSavedId, setSelectedSavedId] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/api/strategies")
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.success && Array.isArray(json.data)) {
+          setSavedStrategies(json.data);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const handleSaveStrategy = async () => {
+    if (!newStrategyName.trim()) return;
+    try {
+      const res = await fetch("/api/strategies", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: newStrategyName.trim(),
+          preset: selectedPreset,
+          parameters: params,
+          features,
+        }),
+      });
+      const json = await res.json();
+      if (json.success && json.data) {
+        setSavedStrategies((prev) => [json.data, ...prev]);
+        setSelectedSavedId(json.data.id);
+        setIsSavingStrategy(false);
+        setNewStrategyName("");
+      }
+    } catch (err) {
+      console.error("Failed to save strategy", err);
+    }
+  };
+
+  const handleLoadSavedStrategy = (saved: {
+    id: string;
+    preset: string;
+    parameters: StrategyParameters;
+  }) => {
+    setSelectedSavedId(saved.id);
+    setSelectedPreset(saved.preset as any);
+    setParams(saved.parameters);
+  };
+
+  const handleDeleteSavedStrategy = async (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      await fetch(`/api/strategies/${id}`, { method: "DELETE" });
+      setSavedStrategies((prev) => prev.filter((s) => s.id !== id));
+      if (selectedSavedId === id) setSelectedSavedId(null);
+    } catch (err) {
+      console.error("Failed to delete strategy", err);
+    }
+  };
+
   // Preset Selection Handler
   const handlePresetChange = (presetKey: StrategyPresetKey) => {
+    setSelectedSavedId(null);
     setSelectedPreset(presetKey);
     setParams(STRATEGY_PRESETS[presetKey].parameters);
   };
@@ -248,7 +325,7 @@ export function BacktestLab() {
           <div className="flex items-center gap-2 p-1 rounded-xl bg-zinc-900 border border-zinc-800">
             <button
               onClick={() => setActiveTab("single")}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                 activeTab === "single"
                   ? "bg-zinc-800 text-white shadow-sm"
                   : "text-zinc-400 hover:text-zinc-200"
@@ -258,7 +335,7 @@ export function BacktestLab() {
             </button>
             <button
               onClick={() => setActiveTab("sweep")}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
                 activeTab === "sweep"
                   ? "bg-zinc-800 text-white shadow-sm"
                   : "text-zinc-400 hover:text-zinc-200"
@@ -266,6 +343,17 @@ export function BacktestLab() {
             >
               <BarChart3 className="w-3.5 h-3.5 text-btc-gold" />
               Parameter Sweep Matrix
+            </button>
+            <button
+              onClick={() => setActiveTab("replay")}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
+                activeTab === "replay"
+                  ? "bg-zinc-800 text-white shadow-sm"
+                  : "text-zinc-400 hover:text-zinc-200"
+              }`}
+            >
+              <RotateCw className="w-3.5 h-3.5 text-btc-gold" />
+              Interactive Replay
             </button>
           </div>
         </div>
@@ -312,6 +400,91 @@ export function BacktestLab() {
                 </button>
               );
             })}
+          </div>
+
+          {/* Saved Custom Strategies & Save Modal */}
+          <div className="mt-4 pt-3 border-t border-zinc-850/60">
+            <div className="flex flex-wrap items-center justify-between gap-2 mb-2.5">
+              <div className="flex items-center gap-1.5">
+                <Bookmark className="w-3.5 h-3.5 text-btc-gold" />
+                <span className="text-xs font-semibold tracking-wider text-zinc-300 uppercase">
+                  Saved Custom Strategies
+                </span>
+                <span className="text-[10px] px-2 py-0.2 rounded-full bg-zinc-800 text-zinc-400 font-mono">
+                  {savedStrategies.length}
+                </span>
+              </div>
+
+              {!isSavingStrategy ? (
+                <button
+                  onClick={() => setIsSavingStrategy(true)}
+                  className="flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700 transition cursor-pointer"
+                >
+                  <FolderPlus className="w-3.5 h-3.5 text-btc-gold" />
+                  Save Current Strategy
+                </button>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    placeholder="Strategy Name (e.g. Trend Pro 2026)"
+                    value={newStrategyName}
+                    onChange={(e) => setNewStrategyName(e.target.value)}
+                    className="px-2.5 py-1 text-xs rounded-lg bg-zinc-950 border border-zinc-700 text-white placeholder-zinc-500 focus:outline-none focus:border-btc-gold w-56"
+                    autoFocus
+                  />
+                  <button
+                    onClick={handleSaveStrategy}
+                    disabled={!newStrategyName.trim()}
+                    className="flex items-center gap-1 px-3 py-1 rounded-lg text-xs font-semibold bg-btc-gold text-zinc-950 hover:bg-btc-gold/90 transition disabled:opacity-50 cursor-pointer"
+                  >
+                    <Save className="w-3 h-3" /> Save
+                  </button>
+                  <button
+                    onClick={() => {
+                      setIsSavingStrategy(false);
+                      setNewStrategyName("");
+                    }}
+                    className="px-2 py-1 text-xs text-zinc-400 hover:text-white cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {savedStrategies.length === 0 ? (
+              <p className="text-[11px] text-zinc-500 italic">
+                No custom strategies saved yet. Tune the parameters below and click &quot;Save Current Strategy&quot; to persist them.
+              </p>
+            ) : (
+              <div className="flex flex-wrap gap-2 pt-1">
+                {savedStrategies.map((s) => {
+                  const isSelected = selectedSavedId === s.id;
+                  return (
+                    <div
+                      key={s.id}
+                      onClick={() => handleLoadSavedStrategy(s)}
+                      className={`group flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs cursor-pointer transition ${
+                        isSelected
+                          ? "bg-purple-500/15 border-purple-500/40 text-purple-300 font-semibold shadow-sm"
+                          : "bg-zinc-900/80 border-zinc-800 text-zinc-300 hover:border-zinc-700 hover:text-white"
+                      }`}
+                    >
+                      <Bookmark className={`w-3 h-3 ${isSelected ? "text-purple-400" : "text-zinc-500"}`} />
+                      <span>{s.name}</span>
+                      <button
+                        onClick={(e) => handleDeleteSavedStrategy(s.id, e)}
+                        className="opacity-0 group-hover:opacity-100 p-0.5 text-zinc-500 hover:text-rose-400 transition"
+                        title="Delete saved strategy"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
 
@@ -1051,6 +1224,12 @@ export function BacktestLab() {
           </div>
         </div>
       )}
+
+      {/* Interactive Data Replay Player */}
+      {activeTab === "replay" && (
+        <DataReplayPlayer />
+      )}
     </div>
   );
 }
+

@@ -26,6 +26,7 @@ import {
   Clock,
   Bot,
   Calculator,
+  Server,
 } from "lucide-react";
 import { MarketCard } from "@/features/market/components/MarketCard";
 import { TechnicalCard } from "@/features/technical-analysis/components/TechnicalCard";
@@ -38,9 +39,11 @@ import { HistoryTable } from "@/features/history/components/HistoryTable";
 import { TimeframeOverview, TimeframeSignal } from "@/features/multi-timeframe";
 import { WhaleActivity, LargeTransactions, OnchainFlows } from "@/features/whale-intelligence";
 import { FundingRate, OpenInterest, LongShortRatio } from "@/features/derivatives";
-import { MacroOverview, DxyCard, YieldCard } from "@/features/macro";
+import { MacroOverview, DxyCard, YieldCard, EconomicCalendarCard } from "@/features/macro";
 import { SentimentTimeline, NewsImpactChart } from "@/features/news-sentiment";
 import { BacktestLab } from "@/features/backtesting";
+import { HealthStatusWidget } from "@/features/monitoring";
+import { WebNotificationBell } from "@/features/alerts";
 import { formatCurrency, formatPercent } from "@/shared/utils/formatters";
 import type { AnalysisPipelineOutput } from "@/features/analysis/services/orchestrator.service";
 import type { PortfolioSummary } from "@/features/paper-trading/types/paper-trading.types";
@@ -56,6 +59,7 @@ type TabId =
   | "sentiment"
   | "backtest"
   | "history"
+  | "health"
   | "all";
 
 interface TabItem {
@@ -293,6 +297,13 @@ export default function DashboardPage() {
         badgeColor: "bg-zinc-800 text-zinc-300 border border-zinc-700/60",
       },
       {
+        id: "health",
+        label: "System Health",
+        icon: Server,
+        badge: "Telemetry",
+        badgeColor: "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30",
+      },
+      {
         id: "all",
         label: "View All",
         icon: Maximize2,
@@ -438,6 +449,9 @@ export default function DashboardPage() {
                 <span className="hidden sm:inline">Jev AI</span>
               </button>
             </div>
+
+            {/* Web Alert Notification Bell */}
+            <WebNotificationBell />
 
             <button
               onClick={triggerAnalysis}
@@ -940,6 +954,9 @@ export default function DashboardPage() {
                       }
                     />
                   </div>
+
+                  {/* Economic Calendar & Upcoming Major Catalysts */}
+                  <EconomicCalendarCard />
                 </div>
               </>
             )}
@@ -1042,6 +1059,35 @@ export default function DashboardPage() {
             )}
 
             <HistoryTable history={history} />
+          </section>
+        )}
+
+        {/* 8. SYSTEM HEALTH & TELEMETRY TAB */}
+        {(activeTab === "health" || activeTab === "all") && (
+          <section className="space-y-6">
+            {activeTab === "all" && (
+              <div className="flex items-center justify-between pb-3 border-b border-zinc-800 pt-4">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    <Server className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h2 className="text-sm font-bold text-white uppercase tracking-wider">
+                      System Health, Latency &amp; Data Freshness
+                    </h2>
+                    <p className="text-xs text-zinc-500">Live operational monitoring of all 6 external data feeds and database connection</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setActiveTab("health")}
+                  className="text-xs text-btc-gold hover:underline flex items-center gap-1 font-semibold cursor-pointer"
+                >
+                  Focus Tab <ChevronRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            )}
+
+            <HealthStatusWidget />
           </section>
         )}
       </main>
