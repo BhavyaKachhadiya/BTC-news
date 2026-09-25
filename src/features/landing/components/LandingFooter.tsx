@@ -16,9 +16,9 @@ export function LandingFooter() {
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-btc-gold to-amber-600 flex items-center justify-center shadow-lg shadow-btc-gold/20">
                 <span className="font-extrabold text-black text-base">₿</span>
               </div>
-              <span className="font-bold tracking-tight text-white text-base">BTC Signal Engine</span>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-zinc-800 text-zinc-300 border border-zinc-700">
-                v1.0-prod
+              <span className="font-bold tracking-tight text-white text-base">SatoshiSignal</span>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-btc-gold/15 text-btc-gold border border-btc-gold/30 font-semibold">
+                QUANT v2.0
               </span>
             </div>
             <p className="text-xs text-zinc-400 max-w-sm leading-relaxed">
@@ -104,7 +104,7 @@ export function LandingFooter() {
         {/* Bottom Bar: Copyright & Compliance */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
           <div>
-            © {new Date().getFullYear()} BTC Signal Engine. All rights reserved. Pure TypeScript & Next.js 15.
+            © {new Date().getFullYear()} SatoshiSignal™. All rights reserved. Pure TypeScript &amp; Next.js 15.
           </div>
           <div className="text-center sm:text-right text-[11px] text-zinc-500 max-w-md">
             Disclaimer: Strictly for educational, quantitative research, and paper simulation purposes. Does not constitute financial or investment advice.

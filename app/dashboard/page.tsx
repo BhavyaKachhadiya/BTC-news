@@ -335,7 +335,7 @@ export default function DashboardPage() {
 
       {/* Footer */}
       <footer className="border-t border-zinc-800/60 py-6 px-4 text-center text-xs text-zinc-500">
-        BTC Signal Engine • Architectural Principle: Jev interprets ambiguous qualitative context; TypeScript calculates deterministic indicators and final signals.
+        SatoshiSignal™ • Architectural Principle: Jev interprets ambiguous qualitative context; TypeScript calculates deterministic indicators and final signals.
       </footer>
     </div>
   );

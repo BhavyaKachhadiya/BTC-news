@@ -3,8 +3,9 @@ import { QueryProvider } from "@/shared/providers/QueryProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "BTC Signal Engine | Research & Paper Trading",
-  description: "Deterministic Bitcoin intelligence, Jev interpretation, and paper trading system.",
+  title: "SatoshiSignal™ | Autonomous Bitcoin Directional Intelligence & Quant Terminal",
+  description:
+    "Institutional-grade autonomous Bitcoin quantitative telemetry, multi-timeframe alignment, Hyperliquid whale tracking, and deterministic signal synthesis.",
 };
 
 export default function RootLayout({

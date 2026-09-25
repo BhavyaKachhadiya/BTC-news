@@ -53,7 +53,7 @@ export function DashboardHeader({
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-lg font-bold tracking-tight text-white">BTC Signal Engine</h1>
+              <h1 className="text-lg font-bold tracking-tight text-white">SatoshiSignal</h1>
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                 <ShieldCheck className="w-3 h-3" /> Paper Trading Only
               </span>

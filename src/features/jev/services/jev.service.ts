@@ -75,8 +75,8 @@ export class JevService implements JevProvider {
           headers: {
             Authorization: `Bearer ${this.apiKey}`,
             "Content-Type": "application/json",
-            "HTTP-Referer": "https://github.com/btc-signal-engine",
-            "X-Title": "BTC Signal Engine",
+            "HTTP-Referer": "https://satoshisignal.app",
+            "X-Title": "SatoshiSignal",
           },
           body: JSON.stringify({
             model: "~typesafe/jev-latest",

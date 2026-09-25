@@ -14,13 +14,13 @@ export function LandingHeader() {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-bold tracking-tight text-white text-base">BTC Signal Engine</span>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-zinc-800 text-zinc-300 border border-zinc-700">
-                v1.0-prod
+              <span className="font-bold tracking-tight text-white text-base">SatoshiSignal</span>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-btc-gold/15 text-btc-gold border border-btc-gold/30 font-semibold">
+                QUANT v2.0
               </span>
             </div>
             <p className="text-[11px] text-zinc-400 hidden sm:block">
-              Quantitative Bitcoin Intelligence & Paper Terminal
+              Autonomous Bitcoin Directional Intelligence &amp; Quant Terminal
             </p>
           </div>
         </div>
