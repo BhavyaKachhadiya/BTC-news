@@ -84,6 +84,27 @@ export default function DashboardPage() {
   const [engineMode, setEngineMode] = useState<"deterministic" | "jev">("jev");
   const [isModeLoading, setIsModeLoading] = useState<boolean>(false);
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const tabParam = params.get("tab") as TabId | null;
+      const validTabs: TabId[] = [
+        "overview",
+        "multi-timeframe",
+        "whale",
+        "derivatives-macro",
+        "sentiment",
+        "backtest",
+        "history",
+        "health",
+        "all",
+      ];
+      if (tabParam && validTabs.includes(tabParam)) {
+        setActiveTab(tabParam);
+      }
+    }
+  }, []);
+
   const fetchDashboardData = useCallback(async () => {
     try {
       setError(null);
@@ -391,7 +412,7 @@ export default function DashboardPage() {
                     ) : (
                       <>
                         <Calculator className="w-3.5 h-3.5 text-btc-gold" />
-                        <span>Mode: Pure Deterministic (Math Only)</span>
+                        <span>Mode: Pure Deterministic</span>
                       </>
                     )}
                   </div>
@@ -428,7 +449,7 @@ export default function DashboardPage() {
                 ) : (
                   <Calculator className="w-3 h-3" />
                 )}
-                <span className="hidden sm:inline">Math Only</span>
+                <span className="hidden sm:inline">Math</span>
               </button>
 
               <button

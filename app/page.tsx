@@ -640,24 +640,19 @@ export default function HomePage() {
                   </Link>
                 </li>
                 <li>
-                  <a href="#terminal-preview" className="hover:text-btc-gold transition-colors">
+                  <Link href="/dashboard?tab=multi-timeframe" className="hover:text-btc-gold transition-colors">
                     Multi-Timeframe Engine
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#terminal-preview" className="hover:text-btc-gold transition-colors">
+                  <Link href="/dashboard?tab=whale" className="hover:text-btc-gold transition-colors">
                     Whale Radar & Flows
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#terminal-preview" className="hover:text-btc-gold transition-colors">
+                  <Link href="/dashboard?tab=derivatives-macro" className="hover:text-btc-gold transition-colors">
                     Macro & FOMC Calendar
-                  </a>
-                </li>
-                <li>
-                  <a href="#terminal-preview" className="hover:text-btc-gold transition-colors">
-                    TypeSafe Jev AI
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -697,9 +692,6 @@ export default function HomePage() {
                 </li>
                 <li>
                   <span className="text-zinc-400">Deterministic Logic</span>
-                </li>
-                <li>
-                  <span className="text-zinc-400">TypeSafe Zod Validation</span>
                 </li>
                 <li>
                   <span className="text-zinc-400">Automatic Fallback Mode</span>
