@@ -203,12 +203,29 @@ export class HealthMonitoringService {
         message: "Connected & operational",
       };
     } catch (err) {
+      let message = "Database disconnected";
+      if (err instanceof Error) {
+        if (
+          err.message.includes("Server selection timeout") ||
+          err.message.includes("No available servers") ||
+          err.message.includes("InternalError")
+        ) {
+          message = "Atlas unreachable (check IP Access List in MongoDB Atlas)";
+        } else if (
+          err.message.includes("Authentication failed") ||
+          err.message.includes("auth error")
+        ) {
+          message = "Authentication failed (check credentials in DATABASE_URL)";
+        } else {
+          message = err.message.replace(/[\r\n]+/g, " ").slice(0, 100);
+        }
+      }
       return {
         status: "degraded", // Degraded rather than hard down if DB URL is unconfigured
         latencyMs: Date.now() - start,
         lastUpdated: new Date().toISOString(),
         isStale: true,
-        message: err instanceof Error ? err.message.slice(0, 100) : "Database disconnected",
+        message,
       };
     }
   }
