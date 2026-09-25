@@ -1,0 +1,241 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model MarketSnapshot {
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  timestamp        DateTime @default(now())
+  price            Float
+  change24h        Float
+  volume24h        Float
+  marketCap        Float
+  high24h          Float?
+  low24h           Float?
+  provider         String   @default("coingecko")
+  rawJson          String?
+
+  @@index([timestamp(sort: Desc)])
+}
+
+model NetworkSnapshot {
+  id                   String   @id @default(auto()) @map("_id") @db.ObjectId
+  timestamp            DateTime @default(now())
+  blockHeight          Int
+  txCount              Int
+  mempoolSize          Int
+  fastestFee           Float
+  halfHourFee          Float
+  hourFee              Float
+  isAnomaly            Boolean  @default(false)
+  anomalyReasons       String[]
+  provider             String   @default("mempool.space")
+
+  @@index([timestamp(sort: Desc)])
+}
+
+model NewsItem {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String?
+  url         String   @unique
+  publishedAt DateTime
+  source      String?
+  createdAt   DateTime @default(now())
+
+  @@index([publishedAt(sort: Desc)])
+}
+
+model TechnicalIndicator {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  timestamp   DateTime @default(now())
+  rsi14       Float
+  ema20       Float
+  ema50       Float
+  sma20       Float
+  atr14       Float
+  volatility  Float
+  priceChange Float
+  volumeChange Float?
+
+  @@index([timestamp(sort: Desc)])
+}
+
+model JevAnalysis {
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  timestamp        DateTime @default(now())
+  marketRegime     String   // "bullish" | "bearish" | "ranging" | "uncertain"
+  regimeConfidence Float
+  newsImpactScore  Float
+  newsDirection    String   // "bullish" | "bearish" | "neutral"
+  setupQualityScore Float
+  networkAnomaly   Boolean
+  rawPrompt        String?
+  rawResponse      String?
+
+  @@index([timestamp(sort: Desc)])
+}
+
+model SignalDecision {
+  id                 String   @id @default(auto()) @map("_id") @db.ObjectId
+  timestamp          DateTime @default(now())
+  action             String   // "LONG" | "SHORT" | "WAIT"
+  confidence         Float
+  reasons            String[]
+  btcPrice           Float
+  rsi14              Float
+  ema20              Float
+  ema50              Float
+  atr14              Float
+  volatility         Float
+  marketRegime       String
+  newsDirection      String
+  newsImpactScore    Float
+  setupQualityScore  Float
+  isNetworkAnomaly   Boolean
+
+  outcome            SignalOutcome?
+
+  @@index([timestamp(sort: Desc)])
+  @@index([action])
+}
+
+model SignalOutcome {
+  id               String         @id @default(auto()) @map("_id") @db.ObjectId
+  signalDecisionId String         @unique @db.ObjectId
+  signalDecision   SignalDecision @relation(fields: [signalDecisionId], references: [id])
+  timestamp        DateTime       @default(now())
+  
+  entryPrice       Float
+  priceAfter1h     Float?
+  pnlPercent1h     Float?
+  priceAfter4h     Float?
+  pnlPercent4h     Float?
+  priceAfter24h    Float?
+  pnlPercent24h    Float?
+  isCompleted      Boolean        @default(false)
+}
+
+model PaperTrade {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  openedAt      DateTime  @default(now())
+  closedAt      DateTime?
+  side          String    // "LONG" | "SHORT"
+  entryPrice    Float
+  exitPrice     Float?
+  amountBtc     Float
+  allocatedUsd  Float
+  realizedPnl   Float?
+  pnlPercent    Float?
+  holdingPeriodMinutes Int?
+  status        String    @default("OPEN") // "OPEN" | "CLOSED"
+  exitReason    String?   // "TAKE_PROFIT" | "STOP_LOSS" | "TIME_EXPIRY" | "OPPOSITE_SIGNAL"
+
+  @@index([status])
+  @@index([openedAt(sort: Desc)])
+}
+
+model TimeframeSnapshot {
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  timestamp        DateTime @default(now())
+  timeframe        String   // "5m" | "15m" | "1h" | "4h" | "1D"
+  price            Float
+  rsi              Float
+  ema20            Float
+  ema50            Float
+  atr              Float
+  volatility       Float
+  trend            String   // "bullish" | "bearish" | "ranging" | "uncertain"
+
+  @@index([timestamp(sort: Desc)])
+  @@index([timeframe])
+}
+
+model WhaleTransaction {
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  timestamp        DateTime @default(now())
+  transactionId    String   @unique
+  amountBtc        Float
+  amountUsd        Float?
+  source           String?  // e.g. "Hyperliquid" | "Mempool"
+  destination      String?
+  classification   String?  // e.g. "Whale Long" | "Large Transfer"
+
+  @@index([timestamp(sort: Desc)])
+}
+
+model OnchainSnapshot {
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  timestamp        DateTime @default(now())
+  largeTxCount     Int
+  whaleLongVolume  Float?
+  whaleShortVolume Float?
+  whaleBullRatio   Float?
+  source           String   @default("Hyperbot/Hyperliquid")
+
+  @@index([timestamp(sort: Desc)])
+}
+
+model DerivativesSnapshot {
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  timestamp        DateTime @default(now())
+  fundingRate      Float?
+  openInterest     Float?
+  longShortRatio   Float?
+  source           String   @default("Binance/Hyperliquid")
+
+  @@index([timestamp(sort: Desc)])
+}
+
+model MacroSnapshot {
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  timestamp        DateTime @default(now())
+  dxyValue         Float?
+  dxyChangePercent Float?
+  treasury10Y      Float?
+  treasury2Y       Float?
+  sp500            Float?
+  goldPrice        Float?
+  goldChangePercent Float?
+  freshnessStatus  String   @default("available") // "available" | "stale" | "unavailable"
+
+  @@index([timestamp(sort: Desc)])
+}
+
+model NewsSentiment {
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  timestamp        DateTime @default(now())
+  headline         String
+  source           String?
+  url              String
+  sentiment        String   // "bullish" | "bearish" | "neutral" | "mixed"
+  impact           String   // "negligible" | "low" | "moderate" | "high" | "exceptional"
+  btcPriceAtPub    Float
+  btcPriceAfter1h  Float?
+  btcPriceAfter4h  Float?
+  btcPriceAfter24h Float?
+
+  @@index([timestamp(sort: Desc)])
+}
+
+model BacktestRun {
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  timestamp        DateTime @default(now())
+  name             String
+  strategyParams   String   // JSON stringified configuration
+  startDate        DateTime
+  endDate          DateTime
+  startingBalance  Float
+  finalBalance     Float
+  totalReturn      Float
+  winRate          Float
+  sharpeRatio      Float
+  maxDrawdown      Float
+  totalTrades      Int
+
+  @@index([timestamp(sort: Desc)])
+}
