@@ -98,7 +98,6 @@ export default function HomePage() {
           <div className="hidden md:flex items-center gap-6 text-sm text-zinc-400">
             <a href="#features" className="hover:text-btc-gold transition-colors">Features</a>
             <a href="#terminal-preview" className="hover:text-btc-gold transition-colors">Live Preview</a>
-            <a href="#alerts-telemetry" className="hover:text-btc-gold transition-colors">Alert Engine</a>
           </div>
 
           <div className="flex items-center gap-3">
@@ -585,41 +584,7 @@ export default function HomePage() {
 
 
 
-      {/* Alert Engine & Telemetry Feature Callout */}
-      <section id="alerts-telemetry" className="py-14 px-4 sm:px-6 max-w-6xl mx-auto">
-        <div className="p-8 rounded-2xl border border-zinc-800 bg-gradient-to-r from-surface-50 via-zinc-900 to-surface-50 relative overflow-hidden">
-          <div className="max-w-3xl space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-btc-gold/30 bg-btc-gold/10 text-btc-gold text-xs font-semibold">
-              <Bell className="w-3.5 h-3.5" />
-              Feature #22 & #23 Highlights
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-white">
-              Native Web Alerts & Multi-Provider Health Telemetry
-            </h2>
-            <p className="text-sm text-zinc-400 leading-relaxed">
-              Never miss a critical market regime breakout. We engineered an in-browser push alert notification center 
-              with synthesized <strong>Web Audio dual-tone chimes</strong> (no Telegram bots required, zero static asset dependencies). 
-              Our unified health watcher tracks uptime, latency, and automated fallback modes across all 5 data providers.
-            </p>
-            <div className="pt-2 flex flex-wrap items-center gap-3">
-              <button
-                onClick={handleTestChime}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-white font-medium text-xs transition-colors border border-zinc-700"
-              >
-                <Volume2 className="w-4 h-4 text-btc-gold" />
-                <span>{chimePlayed ? "Chime Played!" : "Listen to Dual-Tone Audio Alert"}</span>
-              </button>
-              <Link
-                href="/dashboard"
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-btc-gold text-black font-semibold text-xs transition-colors hover:bg-amber-400"
-              >
-                <span>View Alert Notification Center</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
+
 
       {/* Bottom CTA Banner */}
       <section className="py-16 px-4 sm:px-6 max-w-4xl mx-auto text-center space-y-6">
