@@ -18,25 +18,15 @@ import type { WhaleIntelligenceSummary } from "../types/whale.types";
 import type { ExchangeFlowSummary } from "../types/exchange-flow.types";
 import { exchangeFlowService } from "../services/exchange-flow.service";
 
+import { useExchangeFlowsQuery } from "@/shared/hooks/useQueries";
+
 export interface OnchainFlowsProps {
   summary: WhaleIntelligenceSummary;
 }
 
 export function OnchainFlows({ summary }: OnchainFlowsProps) {
-  const [flows, setFlows] = useState<ExchangeFlowSummary>(() =>
-    exchangeFlowService.getExchangeFlows()
-  );
-
-  useEffect(() => {
-    fetch("/api/whale/flows")
-      .then((res) => res.json())
-      .then((json) => {
-        if (json.success && json.data) {
-          setFlows(json.data);
-        }
-      })
-      .catch(() => {});
-  }, []);
+  const { data: flowsData } = useExchangeFlowsQuery();
+  const flows = flowsData || exchangeFlowService.getExchangeFlows();
 
   const {
     totalWhaleLongUsd,

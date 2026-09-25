@@ -47,6 +47,12 @@ import {
 } from "@/shared/utils/formatters";
 import { DataReplayPlayer } from "./DataReplayPlayer";
 
+import {
+  useSavedStrategiesQuery,
+  useSaveStrategyMutation,
+  useDeleteStrategyMutation,
+} from "@/shared/hooks/useQueries";
+
 export function BacktestLab() {
   const gradientId = useId();
   // Strategy Preset & Parameters
@@ -95,48 +101,25 @@ export function BacktestLab() {
     null,
   );
 
-  // Saved Strategies State
-  const [savedStrategies, setSavedStrategies] = useState<
-    Array<{
-      id: string;
-      name: string;
-      preset: string;
-      parameters: StrategyParameters;
-      createdAt: string;
-    }>
-  >([]);
+  // Saved Strategies State via React Query
+  const { data: savedStrategies = [] } = useSavedStrategiesQuery();
+  const saveStrategyMutation = useSaveStrategyMutation();
+  const deleteStrategyMutation = useDeleteStrategyMutation();
   const [isSavingStrategy, setIsSavingStrategy] = useState<boolean>(false);
   const [newStrategyName, setNewStrategyName] = useState<string>("");
   const [selectedSavedId, setSelectedSavedId] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetch("/api/strategies")
-      .then((res) => res.json())
-      .then((json) => {
-        if (json.success && Array.isArray(json.data)) {
-          setSavedStrategies(json.data);
-        }
-      })
-      .catch(() => {});
-  }, []);
-
   const handleSaveStrategy = async () => {
     if (!newStrategyName.trim()) return;
     try {
-      const res = await fetch("/api/strategies", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: newStrategyName.trim(),
-          preset: selectedPreset,
-          parameters: params,
-          features,
-        }),
+      const saved = await saveStrategyMutation.mutateAsync({
+        name: newStrategyName.trim(),
+        preset: selectedPreset,
+        parameters: params,
+        features,
       });
-      const json = await res.json();
-      if (json.success && json.data) {
-        setSavedStrategies((prev) => [json.data, ...prev]);
-        setSelectedSavedId(json.data.id);
+      if (saved) {
+        setSelectedSavedId(saved.id);
         setIsSavingStrategy(false);
         setNewStrategyName("");
       }
@@ -158,8 +141,7 @@ export function BacktestLab() {
   const handleDeleteSavedStrategy = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
     try {
-      await fetch(`/api/strategies/${id}`, { method: "DELETE" });
-      setSavedStrategies((prev) => prev.filter((s) => s.id !== id));
+      await deleteStrategyMutation.mutateAsync(id);
       if (selectedSavedId === id) setSelectedSavedId(null);
     } catch (err) {
       console.error("Failed to delete strategy", err);

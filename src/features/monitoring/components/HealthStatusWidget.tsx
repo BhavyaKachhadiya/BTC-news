@@ -13,35 +13,12 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import type { SystemHealthSummary, ProviderHealthDetail } from "../types/health.types";
+import { useSystemHealthQuery } from "@/shared/hooks/useQueries";
 
 export function HealthStatusWidget() {
-  const [health, setHealth] = useState<SystemHealthSummary | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchHealth = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const res = await fetch("/api/health");
-      const json = await res.json();
-      if (json.success && json.data) {
-        setHealth(json.data);
-      } else {
-        setError(json.error ?? "Failed to fetch provider health status");
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Network error");
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchHealth();
-    const interval = setInterval(fetchHealth, 30_000); // 30s auto refresh
-    return () => clearInterval(interval);
-  }, [fetchHealth]);
+  const { data: health, isLoading, error: queryError, refetch, isRefetching } = useSystemHealthQuery();
+  const error = queryError instanceof Error ? queryError.message : null;
+  const fetchHealth = () => { refetch(); };
 
   const getStatusBadge = (status: ProviderHealthDetail["status"]) => {
     switch (status) {

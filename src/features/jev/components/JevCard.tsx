@@ -55,7 +55,7 @@ export function JevCard({ jev }: JevCardProps) {
         {jev.isDegraded ? (
           <span className="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full bg-btc-gold/15 text-btc-gold border border-btc-gold/30">
             <Calculator className="w-3.5 h-3.5 text-btc-gold" />
-            Mode: Pure Deterministic (Math Only)
+            Mode: Pure Deterministic
           </span>
         ) : (
           <span className="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full bg-purple-500/15 text-purple-300 border border-purple-500/30">

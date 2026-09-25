@@ -12,22 +12,10 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import type { EconomicCalendarSummary, EconomicEvent } from "../types/calendar.types";
+import { useEconomicCalendarQuery } from "@/shared/hooks/useQueries";
 
 export function EconomicCalendarCard() {
-  const [calendar, setCalendar] = useState<EconomicCalendarSummary | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    fetch("/api/macro/calendar")
-      .then((res) => res.json())
-      .then((json) => {
-        if (json.success && json.data) {
-          setCalendar(json.data);
-        }
-      })
-      .catch(() => {})
-      .finally(() => setIsLoading(false));
-  }, []);
+  const { data: calendar, isLoading } = useEconomicCalendarQuery();
 
   const getImpactBadge = (impact: EconomicEvent["impact"]) => {
     switch (impact) {
