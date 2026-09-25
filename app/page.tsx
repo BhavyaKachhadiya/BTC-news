@@ -96,7 +96,7 @@ export default function HomePage() {
           </div>
 
           <div className="hidden md:flex items-center gap-6 text-sm text-zinc-400">
-            <a href="#features" className="hover:text-btc-gold transition-colors">Features (8 Core)</a>
+            <a href="#features" className="hover:text-btc-gold transition-colors">Features</a>
             <a href="#terminal-preview" className="hover:text-btc-gold transition-colors">Live Preview</a>
             <a href="#architecture" className="hover:text-btc-gold transition-colors">Architecture</a>
             <a href="#alerts-telemetry" className="hover:text-btc-gold transition-colors">Alert Engine</a>
@@ -155,7 +155,7 @@ export default function HomePage() {
             href="#features"
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl border border-zinc-800 bg-surface-50/70 hover:bg-surface-100 text-zinc-300 hover:text-white font-medium text-sm transition-all"
           >
-            <span>Explore 8 Core Features</span>
+            <span>Explore Features</span>
             <ChevronRight className="w-4 h-4 text-zinc-500" />
           </a>
         </div>
@@ -163,9 +163,9 @@ export default function HomePage() {
         {/* Quick Stats Bar */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-6 max-w-4xl mx-auto">
           <div className="p-4 rounded-xl border border-zinc-800/80 bg-surface-50/40 text-left">
-            <div className="text-2xl font-extrabold text-btc-gold font-mono">8 Core</div>
-            <div className="text-xs text-zinc-300 font-semibold mt-0.5">Features Complete</div>
-            <div className="text-[11px] text-zinc-500 mt-1">100% audit & unit tested</div>
+            <div className="text-2xl font-extrabold text-btc-gold font-mono">Multi-Factor</div>
+            <div className="text-xs text-zinc-300 font-semibold mt-0.5">Signal Confluence</div>
+            <div className="text-[11px] text-zinc-500 mt-1">TA • On-Chain • Macro</div>
           </div>
           <div className="p-4 rounded-xl border border-zinc-800/80 bg-surface-50/40 text-left">
             <div className="text-2xl font-extrabold text-signal-long font-mono">5 MTAs</div>
