@@ -173,13 +173,13 @@ export default function HomePage() {
             <div className="text-[11px] text-zinc-500 mt-1">5m • 15m • 1h • 4h • 1D</div>
           </div>
           <div className="p-4 rounded-xl border border-zinc-800/80 bg-surface-50/40 text-left">
-            <div className="text-2xl font-extrabold text-blue-400 font-mono">6 Feeds</div>
+            <div className="text-2xl font-extrabold text-blue-400 font-mono">Real-Time</div>
             <div className="text-xs text-zinc-300 font-semibold mt-0.5">Live Data Ingestion</div>
-            <div className="text-[11px] text-zinc-500 mt-1">Binance, Mempool, Yahoo, etc.</div>
+            <div className="text-[11px] text-zinc-500 mt-1">Binance • Mempool • Yahoo</div>
           </div>
           <div className="p-4 rounded-xl border border-zinc-800/80 bg-surface-50/40 text-left">
-            <div className="text-2xl font-extrabold text-amber-300 font-mono">0.00 Risk</div>
-            <div className="text-xs text-zinc-300 font-semibold mt-0.5">Paper Execution Only</div>
+            <div className="text-2xl font-extrabold text-amber-300 font-mono">Deterministic</div>
+            <div className="text-xs text-zinc-300 font-semibold mt-0.5">Paper Trading Only</div>
             <div className="text-[11px] text-zinc-500 mt-1">Simulated slippage & fees</div>
           </div>
         </div>
