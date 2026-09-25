@@ -98,7 +98,6 @@ export default function HomePage() {
           <div className="hidden md:flex items-center gap-6 text-sm text-zinc-400">
             <a href="#features" className="hover:text-btc-gold transition-colors">Features</a>
             <a href="#terminal-preview" className="hover:text-btc-gold transition-colors">Live Preview</a>
-            <a href="#architecture" className="hover:text-btc-gold transition-colors">Architecture</a>
             <a href="#alerts-telemetry" className="hover:text-btc-gold transition-colors">Alert Engine</a>
           </div>
 
@@ -584,61 +583,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Architecture Deep Dive Section */}
-      <section id="architecture" className="py-16 px-4 sm:px-6 max-w-6xl mx-auto border-t border-zinc-800/80 space-y-10">
-        <div className="text-center space-y-2">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 text-xs font-semibold">
-            <Layers className="w-3.5 h-3.5" />
-            Zero Black-Box Architecture
-          </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-white">How The Signal Pipeline Works</h2>
-          <p className="text-sm text-zinc-400 max-w-2xl mx-auto">
-            From raw WebSocket market depth to simulated paper execution, our 4-layer architecture guarantees absolute predictability.
-          </p>
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="p-5 rounded-xl border border-zinc-800 bg-surface-50/40 space-y-3 relative">
-            <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center font-bold text-sm">
-              1
-            </div>
-            <h3 className="font-bold text-white text-sm">1. Multi-Feed Ingestion</h3>
-            <p className="text-xs text-zinc-400 leading-relaxed">
-              Real-time streams from Binance (OHLC & Futures), Mempool.space (blocks & fees), Yahoo (macro), CryptoPanic (news), and Hyperliquid.
-            </p>
-          </div>
-
-          <div className="p-5 rounded-xl border border-zinc-800 bg-surface-50/40 space-y-3 relative">
-            <div className="w-8 h-8 rounded-lg bg-btc-gold/10 border border-btc-gold/20 text-btc-gold flex items-center justify-center font-bold text-sm">
-              2
-            </div>
-            <h3 className="font-bold text-white text-sm">2. Deterministic Quant</h3>
-            <p className="text-xs text-zinc-400 leading-relaxed">
-              Pure TypeScript indicators compute RSI, EMA ribbon alignment, ATR volatility regimes, and whale inflow/outflow delta without external black-box drift.
-            </p>
-          </div>
-
-          <div className="p-5 rounded-xl border border-zinc-800 bg-surface-50/40 space-y-3 relative">
-            <div className="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center font-bold text-sm">
-              3
-            </div>
-            <h3 className="font-bold text-white text-sm">3. TypeSafe AI Synthesis</h3>
-            <p className="text-xs text-zinc-400 leading-relaxed">
-              Jev reasoning engine validates ambiguous regimes and macro headwinds against Zod schemas, with graceful fallback to deterministic rules if offline.
-            </p>
-          </div>
-
-          <div className="p-5 rounded-xl border border-zinc-800 bg-surface-50/40 space-y-3 relative">
-            <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-sm">
-              4
-            </div>
-            <h3 className="font-bold text-white text-sm">4. Execution & Alerts</h3>
-            <p className="text-xs text-zinc-400 leading-relaxed">
-              Simulated paper execution tracks 1h/4h/24h PnL outcomes, while our Web Notification Engine delivers synthesized audio chimes and push alerts.
-            </p>
-          </div>
-        </div>
-      </section>
 
       {/* Alert Engine & Telemetry Feature Callout */}
       <section id="alerts-telemetry" className="py-14 px-4 sm:px-6 max-w-6xl mx-auto">
@@ -704,10 +649,6 @@ export default function HomePage() {
             <span>•</span>
             <span>Pure TypeScript & Next.js 15</span>
             <span>•</span>
-            <span className="text-signal-long flex items-center gap-1 font-mono">
-              <span className="w-2 h-2 rounded-full bg-signal-long inline-block animate-pulse" />
-              8 Core Features Active
-            </span>
           </div>
           <div className="text-zinc-500 text-center sm:text-right">
             Strict Paper Trading Only. No real funds execution or financial advice.
