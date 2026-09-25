@@ -44,35 +44,14 @@ interface FeatureCard {
 }
 
 const ALL_FEATURES: FeatureCard[] = [
-  { id: 1, category: "Market", title: "Real-Time BTC Market Data", desc: "Live price, 24h change, 24h volume, market cap, and candle streams.", highlight: "Binance WebSocket & REST" },
-  { id: 2, category: "Market", title: "Multi-Timeframe Engine", desc: "Independent 5m, 15m, 1h, 4h, and 1D analytics with higher-timeframe alignment.", highlight: "5 Timeframes" },
-  { id: 3, category: "Market", title: "Deterministic TA Engine", desc: "Pure TypeScript indicators: RSI(14), EMA(20/50), SMA, ATR(14), and volatility bands.", highlight: "Zero Black-Box Drift" },
-  { id: 4, category: "On-Chain", title: "Bitcoin Mempool Intelligence", desc: "Live pending transactions, mempool memory size, sat/vB fees, block height, and congestion spikes.", highlight: "Mempool.space API" },
-  { id: 5, category: "On-Chain", title: "Whale Radar & Exchange Flows", desc: ">10 BTC transfers, Hyperliquid top-20 whale positioning, and exchange reserve inflow/outflow deltas.", highlight: "Hyperliquid & On-Chain" },
-  { id: 6, category: "Derivatives", title: "Derivatives & Liquidation Intel", desc: "Perpetual funding rate, Open Interest delta, long/short ratio, and short squeeze indicators.", highlight: "Binance Futures" },
-  { id: 7, category: "Macro", title: "Macro Liquidity & FOMC Calendar", desc: "Real-time DXY, US 2Y/10Y Treasury yields, S&P 500, Nasdaq, Gold, plus automated FOMC/CPI schedule.", highlight: "Yahoo Finance & Calendar" },
-  { id: 8, category: "AI & News", title: "Real-Time News Ingestion", desc: "Continuous CryptoPanic sentiment ingestion with deduplication and source verification.", highlight: "CryptoPanic Live" },
-  { id: 9, category: "AI & News", title: "Weighted Sentiment Scoring", desc: "Temporal decay sentiment scoring (-1.0 to +1.0) with headline clustering and impact weighting.", highlight: "Decay Weighted" },
-  { id: 10, category: "AI & News", title: "TypeSafe Jev AI Reasoning", desc: "Structured LLM market regime interpretation (Gemini Flash) with deterministic fallback guardrails.", highlight: "TypeSafe AI & Fallback" },
-  { id: 11, category: "Signals", title: "Multi-Factor Signal Generator", desc: "Synthesis of TA, mempool, derivatives, and macro into STRONG_BUY, BUY, NEUTRAL, SELL, STRONG_SELL.", highlight: "0 to 100 Confidence" },
-  { id: 12, category: "Signals", title: "Regime-Aware Thresholds", desc: "Dynamic indicator parameter adjustments based on high volatility vs ranging consolidation regimes.", highlight: "Adaptive Filters" },
-  { id: 13, category: "Signals", title: "Confidence Scoring Matrix", desc: "Granular multi-factor matrix weighting indicator confluence, volume confirmation, and macro trends.", highlight: "Multi-Factor Confluence" },
-  { id: 14, category: "Signals", title: "Auditable Signal History", desc: "Persistent historical signal log tracking entry price, generated parameters, and timestamped context.", highlight: "Full Decision Audit" },
-  { id: 15, category: "Lab & Replay", title: "Strategy Backtesting Lab", desc: "Historical simulation on real BTC candles calculating win rate, profit factor, max drawdown, and Sharpe.", highlight: "Backtest Simulator" },
-  { id: 16, category: "Lab & Replay", title: "Persistent Strategy Lab", desc: "Full CRUD database persistence to create, save, load, and version custom trading strategies.", highlight: "Prisma DB Storage" },
-  { id: 17, category: "Lab & Replay", title: "Interactive Candle Data Replay", desc: "Candle-by-candle playback simulator with Play, Pause, Step-Forward controls and speed scrubber (1x-10x).", highlight: "Interactive Scrubber" },
-  { id: 18, category: "Execution", title: "Automated Paper Execution", desc: "Simulated order execution with realistic slippage, simulated transaction fees, and position sizing.", highlight: "Zero Real Capital Risk" },
-  { id: 19, category: "Execution", title: "Dynamic Stop-Loss & Take-Profit", desc: "ATR-based volatility-adjusted stops and multi-tier profit targets calculated automatically.", highlight: "ATR-Based Trailing" },
-  { id: 20, category: "Execution", title: "Portfolio Tracking & PnL", desc: "Live virtual portfolio ledger tracking open positions, unrealized gain, realized PnL, and ROI.", highlight: "Real-Time Ledger" },
-  { id: 21, category: "Execution", title: "Post-Trade Outcome Evaluator", desc: "Automatic 1h, 4h, and 24h post-signal price evaluation checking whether trade hit targets.", highlight: "1h / 4h / 24h Checks" },
-  { id: 22, category: "Alerts & Telemetry", title: "Web Notification Engine", desc: "Browser native push notifications, in-app notification center, and synthesized Web Audio chime.", highlight: "Web Only • Zero Telegram" },
-  { id: 23, category: "Alerts & Telemetry", title: "Unified Health & Telemetry", desc: "Active latency and freshness monitoring across Binance, Mempool, Yahoo, and Hyperliquid with fallback.", highlight: "Circuit Breakers" },
-  { id: 24, category: "Alerts & Telemetry", title: "Graceful Fallback Mode", desc: "Automatic degradation to offline baseline caches if upstream providers rate-limit or experience downtime.", highlight: "Fault Tolerant" },
-  { id: 25, category: "UI & UX", title: "Glassmorphic Terminal Dashboard", desc: "High-density multi-card dashboard designed for quantitative market intelligence and multi-chart monitoring.", highlight: "Dark Mode Native" },
-  { id: 26, category: "UI & UX", title: "Real-Time Live Telemetry Cards", desc: "Dynamic color-coded meters, sparklines, gauges, and status badges across all data modules.", highlight: "Responsive & Alive" },
-  { id: 27, category: "UI & UX", title: "Runtime Toggleable Settings", desc: "Instant toggling between Hybrid (Deterministic + Jev AI) and Pure Deterministic Rule mode in real time.", highlight: "Hot-Swappable" },
-  { id: 28, category: "Security", title: "Strict Safety Architecture", desc: "Zero exchange API write keys, zero live funds connectivity, and strictly enforced paper-only execution.", highlight: "Read-Only Market Ingest" },
-  { id: 29, category: "Security", title: "TypeSafe Zod Validation", desc: "Every incoming market quote, order payload, and AI output is strictly validated through Zod schemas.", highlight: "End-to-End Type Safety" },
+  { id: 1, category: "Market", title: "Real-Time BTC Market Data", desc: "Live price, 24h change, 24h volume, market cap, and candle streams directly from Binance.", highlight: "Binance WebSocket & REST" },
+  { id: 2, category: "Market", title: "Multi-Timeframe Engine", desc: "Independent 5m, 15m, 1h, 4h, and 1D analytics with higher-timeframe alignment scoring.", highlight: "5 Timeframes (5m to 1D)" },
+  { id: 3, category: "On-Chain", title: "Bitcoin Mempool Intelligence", desc: "Live pending transactions, mempool memory size, sat/vB fees, block height, and congestion spikes.", highlight: "Mempool.space API" },
+  { id: 4, category: "On-Chain", title: "Whale Radar & Exchange Flows", desc: ">10 BTC transfers, Hyperliquid top-20 whale positioning, and exchange reserve inflow/outflow deltas.", highlight: "Hyperliquid & On-Chain" },
+  { id: 5, category: "Macro", title: "Macro Liquidity & FOMC Calendar", desc: "Real-time DXY, US 2Y/10Y Treasury yields, S&P 500, Nasdaq, Gold, plus automated FOMC/CPI schedule.", highlight: "Yahoo Finance & Calendar" },
+  { id: 6, category: "News", title: "Real-Time News", desc: "Continuous CryptoPanic sentiment ingestion with deduplication and source verification.", highlight: "CryptoPanic Live" },
+  { id: 7, category: "Signals", title: "Multi-Factor Signal Generator", desc: "Synthesis of TA, mempool, derivatives, and macro into STRONG_BUY, BUY, NEUTRAL, SELL, STRONG_SELL.", highlight: "0 to 100 Confidence" },
+  { id: 8, category: "Alerts", title: "Web Notification Engine", desc: "Browser native push notifications, in-app notification center, and synthesized Web Audio chime.", highlight: "Web Only • Zero Telegram" },
 ];
 
 export default function HomePage() {
@@ -80,7 +59,7 @@ export default function HomePage() {
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [chimePlayed, setChimePlayed] = useState(false);
 
-  const categories = ["All", "Market", "On-Chain", "Derivatives", "Macro", "AI & News", "Signals", "Lab & Replay", "Execution", "Alerts & Telemetry"];
+  const categories = ["All", "Market", "On-Chain", "Macro", "News", "Signals", "Alerts"];
 
   const filteredFeatures = selectedCategory === "All"
     ? ALL_FEATURES
@@ -117,7 +96,7 @@ export default function HomePage() {
           </div>
 
           <div className="hidden md:flex items-center gap-6 text-sm text-zinc-400">
-            <a href="#features" className="hover:text-btc-gold transition-colors">Features (29/29)</a>
+            <a href="#features" className="hover:text-btc-gold transition-colors">Features (8 Core)</a>
             <a href="#terminal-preview" className="hover:text-btc-gold transition-colors">Live Preview</a>
             <a href="#architecture" className="hover:text-btc-gold transition-colors">Architecture</a>
             <a href="#alerts-telemetry" className="hover:text-btc-gold transition-colors">Alert Engine</a>
@@ -176,7 +155,7 @@ export default function HomePage() {
             href="#features"
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl border border-zinc-800 bg-surface-50/70 hover:bg-surface-100 text-zinc-300 hover:text-white font-medium text-sm transition-all"
           >
-            <span>Explore All 29 Features</span>
+            <span>Explore 8 Core Features</span>
             <ChevronRight className="w-4 h-4 text-zinc-500" />
           </a>
         </div>
@@ -184,7 +163,7 @@ export default function HomePage() {
         {/* Quick Stats Bar */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-6 max-w-4xl mx-auto">
           <div className="p-4 rounded-xl border border-zinc-800/80 bg-surface-50/40 text-left">
-            <div className="text-2xl font-extrabold text-btc-gold font-mono">29 / 29</div>
+            <div className="text-2xl font-extrabold text-btc-gold font-mono">8 Core</div>
             <div className="text-xs text-zinc-300 font-semibold mt-0.5">Features Complete</div>
             <div className="text-[11px] text-zinc-500 mt-1">100% audit & unit tested</div>
           </div>
@@ -544,17 +523,17 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Feature Matrix Showcase (All 29 Features) */}
+      {/* Feature Matrix Showcase (8 Core Features) */}
       <section id="features" className="py-16 px-4 sm:px-6 max-w-7xl mx-auto space-y-8">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-btc-gold/30 bg-btc-gold/10 text-btc-gold text-xs font-semibold mb-2">
               <Sparkles className="w-3.5 h-3.5" />
-              Complete Engineering Roadmap (29 of 29)
+              Core Intelligence Stack (8 Features)
             </div>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-white">Full Feature Specification</h2>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-white">Core Feature Specification</h2>
             <p className="text-sm text-zinc-400 mt-1 max-w-2xl">
-              Every single capability from our architecture design is fully implemented, verified with end-to-end unit tests, and live in the terminal.
+              The 8 essential market intelligence capabilities powering our deterministic pipelines and live terminal.
             </p>
           </div>
 
@@ -727,7 +706,7 @@ export default function HomePage() {
             <span>•</span>
             <span className="text-signal-long flex items-center gap-1 font-mono">
               <span className="w-2 h-2 rounded-full bg-signal-long inline-block animate-pulse" />
-              All 29 Features Active
+              8 Core Features Active
             </span>
           </div>
           <div className="text-zinc-500 text-center sm:text-right">
