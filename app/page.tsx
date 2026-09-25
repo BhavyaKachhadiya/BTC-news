@@ -19,7 +19,6 @@ import {
   CheckCircle2,
   BarChart3,
   Terminal,
-  Volume2,
   Calendar,
   Eye,
   RefreshCw,
@@ -31,7 +30,6 @@ import {
   Play,
   RotateCcw,
 } from "lucide-react";
-import { playAlertChime } from "@/features/alerts/utils/browser-notification";
 
 type TerminalView = "signal" | "timeframes" | "whale" | "macro" | "jev";
 
@@ -57,19 +55,11 @@ const ALL_FEATURES: FeatureCard[] = [
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState<TerminalView>("signal");
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
-  const [chimePlayed, setChimePlayed] = useState(false);
-
   const categories = ["All", "Market", "On-Chain", "Macro", "News", "Signals", "Alerts"];
 
   const filteredFeatures = selectedCategory === "All"
     ? ALL_FEATURES
     : ALL_FEATURES.filter((f) => f.category === selectedCategory);
-
-  const handleTestChime = () => {
-    playAlertChime();
-    setChimePlayed(true);
-    setTimeout(() => setChimePlayed(false), 2000);
-  };
 
   return (
     <div className="min-h-screen bg-[#060608] text-zinc-100 selection:bg-btc-gold/20 selection:text-btc-gold relative overflow-hidden">
@@ -101,14 +91,6 @@ export default function HomePage() {
           </div>
 
           <div className="flex items-center gap-3">
-            <button
-              onClick={handleTestChime}
-              title="Test real-time Web Audio chime (no external audio assets)"
-              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-zinc-800 bg-surface-50 text-xs text-zinc-300 hover:text-btc-gold hover:border-zinc-700 transition-colors"
-            >
-              <Volume2 className="w-3.5 h-3.5 text-btc-gold" />
-              <span>{chimePlayed ? "Chime Fired!" : "Test Audio Chime"}</span>
-            </button>
             <Link
               href="/dashboard"
               className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-btc-gold to-amber-500 hover:from-amber-400 hover:to-btc-gold text-black font-semibold text-sm transition-all shadow-md shadow-btc-gold/20 hover:shadow-btc-gold/30 hover:scale-[1.02]"
