@@ -7,3 +7,4 @@ export * from './ichimoku';
 export * from './stochastic';
 export * from './adx';
 export * from './crossovers';
+export * from './elliott-wave';

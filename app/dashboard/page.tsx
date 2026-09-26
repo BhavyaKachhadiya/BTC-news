@@ -69,6 +69,7 @@ const VALID_TABS: readonly TabId[] = [
 export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState<TabId>("overview");
   const [showLoaderModal, setShowLoaderModal] = useState(false);
+  const [marketStructureTimeframe, setMarketStructureTimeframe] = useState<string>("15m");
   const queryClient = useQueryClient();
 
   // 1. FAST INITIAL LOAD: Fetch ONLY the overview tab data first
@@ -110,6 +111,7 @@ export default function DashboardPage() {
 
   const marketStructureQuery = useMarketStructureQuery({
     enabled: activeTab === "market-structure" || isAll,
+    timeframe: marketStructureTimeframe,
   });
 
   const historyQuery = useSignalsHistoryQuery({
@@ -133,7 +135,7 @@ export default function DashboardPage() {
           prefetchSentiment(queryClient);
           break;
         case "market-structure":
-          prefetchMarketStructure(queryClient);
+          prefetchMarketStructure(queryClient, marketStructureTimeframe);
           break;
         case "history":
           prefetchSignalsHistory(queryClient);
@@ -421,6 +423,8 @@ export default function DashboardPage() {
             marketStructure={marketStructure}
             activeTab={activeTab}
             onFocusTab={setActiveTab}
+            timeframe={marketStructureTimeframe}
+            onSelectTimeframe={setMarketStructureTimeframe}
           />
         )}
 

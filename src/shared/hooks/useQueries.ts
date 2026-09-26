@@ -92,8 +92,8 @@ export async function fetchSentiment(): Promise<SentimentData> {
   return json.success && json.data ? json.data : { news: [] };
 }
 
-export async function fetchMarketStructure(): Promise<MarketStructureState | null> {
-  const res = await fetch("/api/market-structure").catch(() => null);
+export async function fetchMarketStructure(timeframe: string = "15m"): Promise<MarketStructureState | null> {
+  const res = await fetch(`/api/market-structure?timeframe=${timeframe}`).catch(() => null);
   if (!res || !res.ok) return null;
   const json = await res.json();
   return json.success && json.data ? json.data : null;
@@ -166,11 +166,11 @@ export function prefetchSentiment(queryClient: QueryClient) {
   });
 }
 
-export function prefetchMarketStructure(queryClient: QueryClient) {
+export function prefetchMarketStructure(queryClient: QueryClient, timeframe: string = "15m") {
   return queryClient.prefetchQuery({
-    queryKey: ["market-structure", "latest"],
-    queryFn: fetchMarketStructure,
-    staleTime: 60_000,
+    queryKey: ["market-structure", timeframe],
+    queryFn: () => fetchMarketStructure(timeframe),
+    staleTime: 30_000,
   });
 }
 
@@ -291,11 +291,12 @@ export function useSentimentQuery(options?: { enabled?: boolean }) {
   });
 }
 
-export function useMarketStructureQuery(options?: { enabled?: boolean }) {
+export function useMarketStructureQuery(options?: { enabled?: boolean; timeframe?: string }) {
+  const tf = options?.timeframe || "15m";
   return useQuery<MarketStructureState | null>({
-    queryKey: ["market-structure", "latest"],
-    queryFn: fetchMarketStructure,
-    staleTime: 60_000,
+    queryKey: ["market-structure", tf],
+    queryFn: () => fetchMarketStructure(tf),
+    staleTime: 30_000,
     enabled: options?.enabled ?? true,
   });
 }

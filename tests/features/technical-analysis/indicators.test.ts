@@ -80,4 +80,17 @@ describe("Technical Analysis Feature", () => {
       expect(state.currentPrice).toBe(52300);
     });
   });
+
+  describe("Elliott Wave", () => {
+    it("calculates wave counts and targets from price series", async () => {
+      const { calculateElliottWave } = await import("@/features/technical-analysis/indicators/elliott-wave");
+      const result = calculateElliottWave(fluctuatingPrices);
+      expect(result).toBeDefined();
+      expect(["1", "2", "3", "4", "5", "A", "B", "C", "unknown"]).toContain(result.currentWave);
+      expect(["motive", "corrective", "consolidation"]).toContain(result.phase);
+      expect(["bullish", "bearish", "neutral"]).toContain(result.direction);
+      expect(result.projection.targetPrice).toBeGreaterThan(0);
+      expect(result.projection.description.length).toBeGreaterThan(0);
+    });
+  });
 });
