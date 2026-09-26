@@ -197,7 +197,7 @@ export class AnalysisOrchestrator {
       "Orchestrator",
     );
 
-    const marketStructure = marketStructureService.analyze();
+    const marketStructure = marketStructureService.analyze(fullPriceSeries);
 
     return {
       success: true,
@@ -292,7 +292,7 @@ export class AnalysisOrchestrator {
     }
 
     const portfolio = await paperTradingService.getPortfolioSummary(marketData.price);
-    const marketStructure = marketStructureService.analyze();
+    const marketStructure = marketStructureService.analyze(fullPriceSeries);
 
     const durationMs = Date.now() - startTime;
     logger.info(
