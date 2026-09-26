@@ -44,7 +44,7 @@ export interface LongShortRatioData {
   readonly longAccount: number; // Long account ratio / percentage (e.g. 0.555 = 55.5%)
   readonly shortAccount: number; // Short account ratio / percentage (e.g. 0.445 = 44.5%)
   readonly timestamp: number; // Milliseconds timestamp
-  readonly provider: "binance";
+  readonly provider: "binance" | "fallback_neutral";
   readonly isImbalanced: boolean;
   readonly imbalanceSide: "LONG" | "SHORT" | "BALANCED";
 }

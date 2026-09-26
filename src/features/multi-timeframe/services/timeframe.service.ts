@@ -27,6 +27,14 @@ export const SUPPORTED_TIMEFRAMES: readonly Timeframe[] = [
   "1D",
 ];
 
+export const DEFAULT_BINANCE_URLS: readonly string[] = [
+  "https://data-api.binance.vision",
+  "https://api1.binance.com",
+  "https://api2.binance.com",
+  "https://api3.binance.com",
+  "https://api.binance.com",
+];
+
 /**
  * Converts internal Timeframe representation to Binance API interval query param.
  */
@@ -42,6 +50,24 @@ export function toBinanceInterval(timeframe: Timeframe): string {
       return "4h";
     case "1D":
       return "1d";
+  }
+}
+
+/**
+ * Converts internal Timeframe representation to Bybit API interval query param.
+ */
+export function toBybitInterval(timeframe: Timeframe): string {
+  switch (timeframe) {
+    case "5m":
+      return "5";
+    case "15m":
+      return "15";
+    case "1h":
+      return "60";
+    case "4h":
+      return "240";
+    case "1D":
+      return "D";
   }
 }
 
@@ -94,14 +120,71 @@ export function determineTimeframeTrend(input: {
 }
 
 export class TimeframeService {
-  private readonly baseUrl: string;
+  private readonly baseUrls: readonly string[];
+  private readonly bybitBaseUrl: string;
 
-  constructor(baseUrl = "https://api.binance.com") {
-    this.baseUrl = baseUrl;
+  constructor(
+    baseUrls: string | readonly string[] = DEFAULT_BINANCE_URLS,
+    bybitBaseUrl = "https://api.bybit.com",
+  ) {
+    this.baseUrls = typeof baseUrls === "string" ? [baseUrls] : baseUrls;
+    this.bybitBaseUrl = bybitBaseUrl;
   }
 
   /**
-   * Fetches raw Kline bars for a specific timeframe from public Binance API.
+   * Fetches kline bars from Bybit public market API as an exchange fallback.
+   */
+  public async fetchBybitKlines(
+    timeframe: Timeframe,
+    symbol = "BTCUSDT",
+    limit = 60,
+  ): Promise<BinanceKlineBar[]> {
+    const interval = toBybitInterval(timeframe);
+    const url = `${this.bybitBaseUrl}/v5/market/kline?category=spot&symbol=${symbol}&interval=${interval}&limit=${limit}`;
+    logger.debug(`Fetching klines from Bybit fallback: ${symbol} (${timeframe})`, "TimeframeService");
+
+    const rawData = await fetchJson<{
+      retCode: number;
+      result?: { list?: Array<[string, string, string, string, string, string, string]> };
+    }>(url, {
+      providerName: "Bybit",
+      timeoutMs: 8000,
+    });
+
+    if (rawData.retCode !== 0 || !rawData.result?.list || rawData.result.list.length === 0) {
+      throw new ValidationError(`Invalid Bybit klines payload for timeframe ${timeframe}`);
+    }
+
+    // Bybit returns newest-first; reverse to match Binance oldest-first chronological order
+    const chronological = rawData.result.list.slice().reverse();
+
+    return chronological.map((k) => {
+      const openTime = Number.parseInt(k[0], 10);
+      const open = Number.parseFloat(k[1]);
+      const high = Number.parseFloat(k[2]);
+      const low = Number.parseFloat(k[3]);
+      const close = Number.parseFloat(k[4]);
+      const volume = Number.parseFloat(k[5]);
+
+      if (Number.isNaN(open) || Number.isNaN(high) || Number.isNaN(low) || Number.isNaN(close)) {
+        throw new ValidationError(`Encountered NaN price in Bybit kline for ${timeframe}`);
+      }
+
+      return {
+        openTime,
+        open,
+        high,
+        low,
+        close,
+        volume: Number.isNaN(volume) ? 0 : volume,
+        closeTime: openTime,
+      };
+    });
+  }
+
+  /**
+   * Fetches raw Kline bars for a specific timeframe from public Binance API
+   * across multiple resilient mirror endpoints, with Bybit exchange fallback.
    */
   public async fetchKlines(
     timeframe: Timeframe,
@@ -109,56 +192,71 @@ export class TimeframeService {
     limit = 60,
   ): Promise<BinanceKlineBar[]> {
     const interval = toBinanceInterval(timeframe);
-    const url = `${this.baseUrl}/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`;
+    let lastError: unknown = null;
 
-    try {
-      const rawData = await fetchJson<unknown>(url, {
-        providerName: "Binance",
-        timeoutMs: 10000,
-      });
+    for (const baseUrl of this.baseUrls) {
+      const url = `${baseUrl}/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`;
 
-      const parsed = binanceKlinesSchema.safeParse(rawData);
-      if (!parsed.success) {
-        throw new ValidationError(
-          `Invalid kline payload structure for timeframe ${timeframe}`,
-          parsed.error.issues,
-        );
-      }
+      try {
+        const rawData = await fetchJson<unknown>(url, {
+          providerName: "Binance",
+          timeoutMs: 8000,
+        });
 
-      return parsed.data.map((k) => {
-        const open = Number.parseFloat(k[1] as string);
-        const high = Number.parseFloat(k[2] as string);
-        const low = Number.parseFloat(k[3] as string);
-        const close = Number.parseFloat(k[4] as string);
-        const volume = Number.parseFloat(k[5] as string);
-
-        if (Number.isNaN(open) || Number.isNaN(high) || Number.isNaN(low) || Number.isNaN(close)) {
-          throw new ValidationError(`Encountered NaN price value in kline for timeframe ${timeframe}`);
+        const parsed = binanceKlinesSchema.safeParse(rawData);
+        if (!parsed.success) {
+          throw new ValidationError(
+            `Invalid kline payload structure for timeframe ${timeframe}`,
+            parsed.error.issues,
+          );
         }
 
-        return {
-          openTime: k[0] as number,
-          open,
-          high,
-          low,
-          close,
-          volume: Number.isNaN(volume) ? 0 : volume,
-          closeTime: typeof k[6] === "number" ? k[6] : 0,
-        };
+        return parsed.data.map((k) => {
+          const open = Number.parseFloat(k[1] as string);
+          const high = Number.parseFloat(k[2] as string);
+          const low = Number.parseFloat(k[3] as string);
+          const close = Number.parseFloat(k[4] as string);
+          const volume = Number.parseFloat(k[5] as string);
+
+          if (Number.isNaN(open) || Number.isNaN(high) || Number.isNaN(low) || Number.isNaN(close)) {
+            throw new ValidationError(`Encountered NaN price value in kline for timeframe ${timeframe}`);
+          }
+
+          return {
+            openTime: k[0] as number,
+            open,
+            high,
+            low,
+            close,
+            volume: Number.isNaN(volume) ? 0 : volume,
+            closeTime: typeof k[6] === "number" ? k[6] : 0,
+          };
+        });
+      } catch (error: unknown) {
+        lastError = error;
+        logger.warn(`Binance mirror ${baseUrl} failed for ${timeframe}: ${String(error)}`, "TimeframeService");
+        // Try next mirror
+      }
+    }
+
+    // If all Binance mirrors failed (e.g. 451 geo-restriction), attempt Bybit fallback
+    try {
+      logger.warn(`All Binance mirrors failed for ${timeframe}. Triggering Bybit fallback.`, "TimeframeService", {
+        lastBinanceError: String(lastError),
       });
-    } catch (error: unknown) {
-      logger.error(`Failed to fetch Binance klines for ${timeframe}`, "TimeframeService", {
-        error: String(error),
-        symbol,
-        timeframe,
+      return await this.fetchBybitKlines(timeframe, symbol, limit);
+    } catch (bybitError: unknown) {
+      logger.error(`Both Binance and Bybit fallback failed for timeframe ${timeframe}`, "TimeframeService", {
+        binanceError: String(lastError),
+        bybitError: String(bybitError),
       });
-      if (error instanceof ProviderError || error instanceof ValidationError) {
-        throw error;
+      if (lastError instanceof ProviderError || lastError instanceof ValidationError) {
+        throw lastError;
       }
       throw new ProviderError(
         "Binance",
-        `Failed to fetch klines for ${timeframe}: ${error instanceof Error ? error.message : String(error)}`,
-        error,
+        `Failed to fetch klines for ${timeframe}: ${lastError instanceof Error ? lastError.message : String(lastError)}`,
+        lastError,
       );
     }
   }

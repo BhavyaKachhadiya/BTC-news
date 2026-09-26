@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import {
   determineTimeframeTrend,
   toBinanceInterval,
+  toBybitInterval,
   SUPPORTED_TIMEFRAMES,
   timeframeService,
 } from "@/features/multi-timeframe/services/timeframe.service";
@@ -24,6 +25,14 @@ describe("Multi-Timeframe Feature", () => {
       expect(toBinanceInterval("1h")).toBe("1h");
       expect(toBinanceInterval("4h")).toBe("4h");
       expect(toBinanceInterval("1D")).toBe("1d");
+    });
+
+    it("correctly maps internal Timeframe representations to Bybit interval strings", () => {
+      expect(toBybitInterval("5m")).toBe("5");
+      expect(toBybitInterval("15m")).toBe("15");
+      expect(toBybitInterval("1h")).toBe("60");
+      expect(toBybitInterval("4h")).toBe("240");
+      expect(toBybitInterval("1D")).toBe("D");
     });
 
     it("supports exactly 5 canonical timeframes", () => {
