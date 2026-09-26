@@ -22,6 +22,8 @@ import type { WhaleIntelligenceSummary } from "@/features/whale-intelligence/typ
 import type { DerivativesSnapshot } from "@/features/derivatives/types/derivatives.types";
 import type { MacroSnapshot } from "@/features/macro/types/macro.types";
 import type { SentimentTimelineSummary } from "@/features/news-sentiment/types/sentiment.types";
+import { marketStructureService } from "@/features/market-structure/market-structure.service";
+import type { MarketStructureState } from "@/features/market-structure/types";
 
 export interface AnalysisPipelineOutput {
   readonly success: boolean;
@@ -39,6 +41,13 @@ export interface AnalysisPipelineOutput {
   readonly derivatives?: DerivativesSnapshot;
   readonly macro?: MacroSnapshot;
   readonly newsSentiment?: SentimentTimelineSummary;
+  readonly marketStructure?: MarketStructureState;
+}
+
+export interface OverviewResponseData {
+  readonly analysis: AnalysisPipelineOutput;
+  readonly portfolio: import("@/features/paper-trading/types/paper-trading.types").PortfolioSummary;
+  readonly news: readonly import("@/features/news/types/news.types").NewsItem[];
 }
 
 export class AnalysisOrchestrator {
@@ -188,6 +197,8 @@ export class AnalysisOrchestrator {
       "Orchestrator",
     );
 
+    const marketStructure = marketStructureService.analyze();
+
     return {
       success: true,
       timestamp: new Date().toISOString(),
@@ -204,6 +215,109 @@ export class AnalysisOrchestrator {
       derivatives: derivativesSnapshot,
       macro: macroSnapshot,
       newsSentiment,
+      marketStructure,
+    };
+  }
+
+  /**
+   * Executes a fast, lightweight pipeline containing ONLY the data required for the Overview tab.
+   * Skips multi-timeframe candle fetches, whale scraping, derivatives scraping, and macro feeds.
+   */
+  public async runOverviewPipeline(): Promise<OverviewResponseData> {
+    const startTime = Date.now();
+    logger.info("▶ Starting BTC Overview Pipeline (Fast Path)", "Orchestrator");
+
+    // 1. Fetch only essential core market, mempool, news, and history
+    const [
+      marketData,
+      networkData,
+      newsItems,
+      historicalPrices,
+    ] = await Promise.all([
+      coingeckoService.getCurrentMarketData(),
+      mempoolService.getCurrentNetworkData(),
+      newsService.getRecentNews(15).catch((err: unknown) => {
+        logger.warn("News fetch failed in overview pipeline", "Orchestrator", { error: String(err) });
+        return [];
+      }),
+      coingeckoService.getHistoricalPrices({ days: 30, interval: "daily" }),
+    ]);
+
+    // 2. Technical analysis
+    const fullPriceSeries = [...historicalPrices];
+    if (fullPriceSeries.length === 0 || fullPriceSeries[fullPriceSeries.length - 1] !== marketData.price) {
+      fullPriceSeries.push(marketData.price);
+    }
+    const technicals = technicalAnalysisService.analyze({ prices: fullPriceSeries });
+
+    // 3. Network anomaly detection
+    const anomaly = detectNetworkAnomaly(networkData, this.lastNetworkData);
+    this.lastNetworkData = networkData;
+
+    // 4. Jev AI analysis (fast context)
+    const jevContext: JevInputContext = {
+      market: marketData,
+      technicals,
+      network: networkData,
+      networkAnomaly: anomaly,
+      news: newsItems,
+    };
+    const jevResult = await jevService.analyze(jevContext);
+
+    // 5. Deterministic signal synthesis
+    const signalContext: SignalContext = {
+      market: marketData,
+      technicals,
+      network: networkData,
+      anomaly,
+      news: newsItems,
+      jev: jevResult,
+    };
+    const signalResult = signalService.generateSignal(signalContext);
+
+    // 6. Asynchronous DB persistence and paper trading update
+    let decisionId: string | undefined;
+    try {
+      decisionId = await historyService.saveSignalDecision(signalResult, signalContext);
+    } catch (dbErr: unknown) {
+      logger.warn("Decision could not be saved to DB in overview", "Orchestrator", {
+        error: String(dbErr),
+      });
+    }
+
+    try {
+      await paperTradingService.processSignal(signalResult, marketData.price);
+    } catch (ptErr: unknown) {
+      logger.warn("Paper trading update error in overview", "Orchestrator", { error: String(ptErr) });
+    }
+
+    const portfolio = await paperTradingService.getPortfolioSummary(marketData.price);
+    const marketStructure = marketStructureService.analyze();
+
+    const durationMs = Date.now() - startTime;
+    logger.info(
+      `✔ Overview pipeline finished in ${durationMs}ms. Action: [${signalResult.action}] Confidence: ${signalResult.confidence}%`,
+      "Orchestrator",
+    );
+
+    const analysis: AnalysisPipelineOutput = {
+      success: true,
+      timestamp: new Date().toISOString(),
+      signal: signalResult,
+      market: marketData,
+      technicals,
+      network: networkData,
+      anomaly,
+      jev: jevResult,
+      recentNewsCount: newsItems.length,
+      decisionId,
+      marketStructure,
+    };
+
+    return {
+      analysis,
+      portfolio,
+      news: newsItems,
     };
   }
 }

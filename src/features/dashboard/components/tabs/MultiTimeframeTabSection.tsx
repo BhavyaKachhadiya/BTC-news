@@ -47,8 +47,10 @@ export function MultiTimeframeTabSection({
           <TimeframeOverview alignment={effectiveMtf} />
         </div>
       ) : (
-        <div className="rounded-2xl border border-zinc-800 bg-surface-100/60 p-8 text-center text-zinc-400">
-          Multi-timeframe alignment data is initializing. Run analysis to fetch live horizons.
+        <div className="rounded-2xl border border-zinc-800 bg-surface-800/60 p-12 text-center text-zinc-400 space-y-3">
+          <div className="w-8 h-8 rounded-full border-2 border-indigo-500/30 border-t-indigo-500 animate-spin mx-auto" />
+          <div className="font-semibold text-white">Aggregating Multi-Timeframe Horizons...</div>
+          <div className="text-xs text-zinc-500">Calculating EMAs and RSI across 5m, 15m, 1h, 4h, and 1D horizons</div>
         </div>
       )}
     </section>

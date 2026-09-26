@@ -7,9 +7,10 @@ interface DashboardTabsNavProps {
   readonly tabs: readonly TabItem[];
   readonly activeTab: TabId;
   readonly onSelectTab: (tab: TabId) => void;
+  readonly onHoverTab?: (tab: TabId) => void;
 }
 
-export function DashboardTabsNav({ tabs, activeTab, onSelectTab }: DashboardTabsNavProps) {
+export function DashboardTabsNav({ tabs, activeTab, onSelectTab, onHoverTab }: DashboardTabsNavProps) {
   return (
     <nav className="sticky top-[57px] z-40 bg-surface-900/95 backdrop-blur-md border-b border-zinc-800 px-4 sm:px-8 py-2.5">
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-4 overflow-x-auto no-scrollbar">
@@ -21,6 +22,8 @@ export function DashboardTabsNav({ tabs, activeTab, onSelectTab }: DashboardTabs
               <button
                 key={tab.id}
                 onClick={() => onSelectTab(tab.id)}
+                onMouseEnter={() => onHoverTab?.(tab.id)}
+                onFocus={() => onHoverTab?.(tab.id)}
                 className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
                   isActive
                     ? "bg-btc-gold text-black shadow-md shadow-btc-gold/20"

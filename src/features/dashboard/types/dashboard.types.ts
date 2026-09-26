@@ -3,6 +3,7 @@ import type React from "react";
 export type TabId =
   | "overview"
   | "multi-timeframe"
+  | "market-structure"
   | "whale"
   | "derivatives-macro"
   | "sentiment"

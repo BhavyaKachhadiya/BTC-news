@@ -43,7 +43,7 @@ export function WhaleTabSection({
         </div>
       )}
 
-      {whale && (
+      {whale ? (
         <div className="space-y-6">
           {/* OnchainFlows Summary */}
           <OnchainFlows summary={whale} />
@@ -61,6 +61,12 @@ export function WhaleTabSection({
               transactions={whale.largeTransactions ?? []}
             />
           </div>
+        </div>
+      ) : (
+        <div className="rounded-2xl border border-zinc-800 bg-surface-800/60 p-12 text-center text-zinc-400 space-y-3">
+          <div className="w-8 h-8 rounded-full border-2 border-btc-gold/30 border-t-btc-gold animate-spin mx-auto" />
+          <div className="font-semibold text-white">Loading Whale &amp; On-Chain Telemetry...</div>
+          <div className="text-xs text-zinc-500">Querying Hyperliquid top 20 whale traders &amp; large mempool transfers</div>
         </div>
       )}
     </section>

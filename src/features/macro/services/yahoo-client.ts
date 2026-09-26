@@ -3,7 +3,7 @@ import { logger } from "@/shared/logger/logger";
 import { extractYahooChartQuote, type ExtractedYahooQuote } from "../schemas/macro.schema";
 
 export const DEFAULT_USER_AGENT =
-  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36";
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36";
 
 export const DEFAULT_MACRO_TIMEOUT_MS = 6000;
 
@@ -30,8 +30,8 @@ export async function fetchYahooChart(
   } = options;
 
   const hosts = [
-    "https://query1.finance.yahoo.com",
     "https://query2.finance.yahoo.com",
+    "https://query1.finance.yahoo.com",
   ];
 
   let lastError: unknown = null;
@@ -48,8 +48,11 @@ export async function fetchYahooChart(
         providerName: `YahooFinance-${symbol}`,
         headers: {
           "User-Agent": userAgent,
-          Accept: "application/json, text/plain, */*",
+          "Accept": "application/json, text/plain, */*",
           "Accept-Language": "en-US,en;q=0.9",
+          "sec-ch-ua": '"Google Chrome";v="129", "Not=A?Brand";v="8", "Chromium";v="129"',
+          "sec-ch-ua-mobile": "?0",
+          "sec-ch-ua-platform": '"Windows"',
         },
       });
 
